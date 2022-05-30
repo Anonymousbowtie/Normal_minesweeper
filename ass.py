@@ -18,6 +18,7 @@ def get(name):
             #image = Image.open(imagelist[name][0])
             #image = image.resize((y,x),Image.ANTIALIAS)
             #imagelist[name][1] = ImageTk.PhotoImage(image)
+            i = 2
         return imagelist[name][1]
     return None    
 
