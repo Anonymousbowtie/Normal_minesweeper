@@ -4,7 +4,7 @@ Created on Fri Apr 29 08:53:27 2022
 @author: ljhs8
 """
 from tkinter import *
-from PIL import ImageTk, Image
+#from PIL import ImageTk, Image
 import random
 
 imagelist ={
@@ -15,9 +15,9 @@ imagelist ={
 def get(name):
     if name in imagelist:
         if imagelist[name][1] is None:
-            image = Image.open(imagelist[name][0])
+            #image = Image.open(imagelist[name][0])
             #image = image.resize((y,x),Image.ANTIALIAS)
-            imagelist[name][1] = ImageTk.PhotoImage(image)
+            #imagelist[name][1] = ImageTk.PhotoImage(image)
         return imagelist[name][1]
     return None    
 
