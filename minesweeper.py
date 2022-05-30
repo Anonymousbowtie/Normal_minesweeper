@@ -9,7 +9,7 @@ from cell import Cell
 import settings
 import utils
 import ass
-from PIL import ImageTk, Image
+#from PIL import ImageTk, Image
 
 page = Tk()
 #window settings
