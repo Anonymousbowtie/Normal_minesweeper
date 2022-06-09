@@ -5,16 +5,24 @@ Created on Wed Apr 27 22:26:28 2022
 """
 from tkinter import Button
 from tkinter import Label
+from tkinter.font import Font
 import settings
 import random
+import utils
 
 class Cell:
     all = []
     cell_count_obj = None
     death_count_obj = None
+    sec_count_obj = None
+    msec_count_obj = None
     cell_count = settings.CELL_COUNT - settings.MINESCOUNT
     killcount = 0
     killstate = 0
+    msec = -1
+    running = False
+    Exploded = False
+
     def __init__(self,x,y,is_mine=False):
         self.is_mine = is_mine
         self.cell_bt_obj = None
@@ -36,17 +44,26 @@ class Cell:
         Cell.all = []
         Cell.cell_count = x*y - minesnum
         Cell.Exploded = False
+        Cell.running = False
+        Cell.msec = -1
+        Cell.msec_count_obj['text']=".000"
+        Cell.sec_count_obj['text']="0"
         Cell.cell_count_obj.configure(
             text = f'Cells left: {Cell.cell_count}'
             )
+
+
+
     @ staticmethod
     def get_killstate():
         return Cell.killstate
 
     def create_bt_obj(self,location):
+        #myfont =
         btn = Button(
             location,
             text = "",
+            font = ('bold',9),
             width = 4,
             height = 2,
             bg = settings.WHITE
@@ -88,6 +105,53 @@ class Cell:
         )
         Cell.death_count_obj = lbl
 
+    @ staticmethod
+    def create_seccount_label(location,sfont):
+        lbl = Label(
+            location,
+            #text = f"kills: {Cell.killcount}",
+            text  = "0",
+            width = 3,
+            height = 2,
+            bg = 'black',
+            fg = settings.WHITE,
+            font = sfont,
+            anchor = 'e'
+        )
+        Cell.sec_count_obj = lbl
+
+    @ staticmethod
+    def create_mseccount_label(location, msfont):
+        lbl = Label(
+            location,
+            #text = f"kills: {Cell.killcount}",
+            text  = ".000",
+            width = 3,
+            height = 2,
+            bg = 'black',
+            fg = settings.GREY,
+            font = msfont,
+            anchor = 'w'
+        )
+        Cell.msec_count_obj = lbl
+
+    def counter_label(Slbl,MSlbl):
+        def MScount():
+            if Cell.running:
+                if Cell.msec==-1:
+                    msdisplay=".00"
+                    sdisplay = "0"
+                else:
+                    num = "0"+ "0" + str(Cell.msec)
+                    msdisplay= num[-3:]
+                    sdisplay = "0"
+                    if Cell.msec >= 1000:
+                        sdisplay = str(Cell.msec)[:-3]
+                MSlbl['text']="." + msdisplay
+                Slbl['text']=sdisplay
+                MSlbl.after(1, MScount)
+                Cell.msec += 1
+        MScount()
 
 
     def left_click(self,event):
@@ -144,12 +208,20 @@ class Cell:
                 print("the dead really do stay where you bury them")
         self.RPress = False
         self.LPress = False
+        if Cell.cell_count ==0:
+            Cell.running = False
+        if not Cell.running and not Cell.Exploded:
+            Cell.running = True
+            Cell.counter_label(Cell.sec_count_obj, Cell.msec_count_obj)
+
+
 
     def show_mine(self):
 
         self.cell_bt_obj.configure(
             bg = "red"
             )
+
         if self.clicked == True:
             return
         self.cell_bt_obj['state'] = 'disabled'
@@ -166,6 +238,8 @@ class Cell:
         if Cell.killcount > 15:
             Cell.killstate = random.randint(0,1)
         self.clicked = True
+        Cell.running = False
+        Cell.Exploded = True
 
 
     def get_cell_by_axis(self,x,y):
@@ -204,11 +278,15 @@ class Cell:
         if self.counted == False:
             Cell.cell_count -= 1
             self.counted = True
+        if Cell.cell_count <= 0:
+            Cell.running = False
         if self.surrounding_mines_len != 0:
             self.cell_bt_obj.configure(
                 text = self.surrounding_mines_len,
+                #font = 'bold',
                 relief = 'sunken',
-                bg = settings.GREY
+                bg = settings.GREY,
+                fg = 'brown'
             )
         else:
             self.cell_bt_obj.configure(
@@ -224,6 +302,7 @@ class Cell:
 
         self.cell_bt_obj.unbind('<Button-1>')
         self.cell_bt_obj.unbind('<Button-3>')
+        self.cell_bt_obj.bind("<Button-1>", self.chording)
 
     def chording(self,event):
         if self.clicked ==False:

@@ -5,6 +5,7 @@ Created on Wed Apr 27 13:16:30 2022
 """
 
 from tkinter import *
+from tkinter.font import Font
 from cell import Cell
 import settings
 import utils
@@ -25,7 +26,8 @@ page.iconphoto(False, icon)
 mines = settings.MINESCOUNT
 gx = settings.GRID_WIDTH
 gy = settings.GRID_HEIGHT
-
+s_font = Font(family='Helvetica', size=15, weight='bold')
+ms_font = Font(family='Helvetica', size=8)
 #frame settings
 top_fr = Frame(
     page,
@@ -166,8 +168,24 @@ Cell.create_cellcount_label(left_fr)
 Cell.cell_count_obj.place(x=utils.width_pct(3),y=0)
 Cell.create_deathcount_label(left_fr)
 Cell.death_count_obj.place(x =utils.width_pct(5),
-                           y = utils.height_pct(9))
+                            y = utils.height_pct(9))
+Cell.create_mseccount_label(left_fr, ms_font)
+Cell.msec_count_obj.place(x=utils.width_pct(12),
+                            y=utils.height_pct(20.5),
+                            anchor= "w"
+                            )
+Cell.create_seccount_label(left_fr, s_font)
+Cell.sec_count_obj.place(x=utils.width_pct(12),
+                            y= utils.height_pct(20),
+                            anchor = "e"
+                            )
+
+
 #page.wm_attributes('-transparentcolor','brown')
+
+
+
+
 
 #run window
 page.mainloop()
