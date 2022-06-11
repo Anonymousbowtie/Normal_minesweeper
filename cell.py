@@ -213,7 +213,8 @@ class Cell:
         if not Cell.running and not Cell.Exploded:
             Cell.running = True
             Cell.counter_label(Cell.sec_count_obj, Cell.msec_count_obj)
-
+        if Cell.cell_count == 0:
+            Cell.running = False
 
 
     def show_mine(self):
@@ -278,8 +279,6 @@ class Cell:
         if self.counted == False:
             Cell.cell_count -= 1
             self.counted = True
-        if Cell.cell_count <= 0:
-            Cell.running = False
         if self.surrounding_mines_len != 0:
             self.cell_bt_obj.configure(
                 text = self.surrounding_mines_len,
